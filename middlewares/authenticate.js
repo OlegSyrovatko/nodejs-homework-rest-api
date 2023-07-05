@@ -12,7 +12,8 @@ const authenticate = async (req, res, next) => {
   try {
     const id = jwt.verify(token, SECRET_KEY);
     const user = await User.findOne({ _id: id.id });
-    if (!user) {
+    if (!user || !user.token || !user.token !== token) {
+      // can not login from other devise
       next(HttpError(401, "Not authorized"));
     }
     req.user = user;
