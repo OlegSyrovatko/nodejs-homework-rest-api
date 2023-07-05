@@ -21,7 +21,8 @@ const getById = async (req, res) => {
 };
 
 const add = async (req, res) => {
-  const data = await Contact.create(req.body);
+  const {_id: owner} = req.user;
+  const data = await Contact.create({...req.body, owner});
   if (!data) {
     throw HttpError(404, "Not found");
   }
