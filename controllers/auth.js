@@ -16,7 +16,7 @@ const register = async (req, res) => {
 
   res.status(201).json({
     email: newUser.email,
-    name: newUser.name,
+    subscription: "starter",
   });
 };
 
@@ -38,7 +38,13 @@ const login = async (req, res) => {
 
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "23h" });
 
-  res.json({ token });
+  res.json({
+    token,
+    user: {
+      email,
+      subscription: "starter",
+    },
+  });
 };
 
 module.exports = {

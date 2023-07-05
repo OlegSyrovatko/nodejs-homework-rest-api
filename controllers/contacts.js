@@ -3,7 +3,13 @@ const { HttpError, ctrlWrapper } = require("../helpers");
 const { Contact } = require("../models/contact");
 
 const getAll = async (req, res) => {
-  const data = await Contact.find();
+  const { _id: owner } = req.user;
+  const { page = 1, limit = 10 } = req.query;
+  const skip = (page - 1) * limit;
+  const data = await Contact.find({ owner }, "-createdAt -updatedAt", {
+    skip,
+    limit,
+  }).populate("owner", "name email");
   if (!data) {
     throw HttpError(404, "Not found");
   }
@@ -21,8 +27,8 @@ const getById = async (req, res) => {
 };
 
 const add = async (req, res) => {
-  const {_id: owner} = req.user;
-  const data = await Contact.create({...req.body, owner});
+  const { _id: owner } = req.user;
+  const data = await Contact.create({ ...req.body, owner });
   if (!data) {
     throw HttpError(404, "Not found");
   }
