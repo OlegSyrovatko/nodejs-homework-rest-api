@@ -7,7 +7,7 @@ const authenticate = async (req, res, next) => {
   const { authorization = "" } = req.headers;
   const [bearer, token] = authorization.split(" ");
   if (bearer !== "Bearer") {
-    next(HttpError(401, "Not authorized1"));
+    next(HttpError(401, "Not authorized"));
   }
   try {
     const id = jwt.verify(token, SECRET_KEY);
@@ -15,12 +15,12 @@ const authenticate = async (req, res, next) => {
     if (!user) {
     // if (!user || !user.token || !user.token !== token) {
       // can not login from other devise
-      next(HttpError(401, "Not authorized2"));
+      next(HttpError(401, "Not authorized"));
     }
     req.user = user;
     next();
   } catch (error) {
-    next(HttpError(401, "Not authorized3"));
+    next(HttpError(401, "Not authorized"));
   }
 };
 
