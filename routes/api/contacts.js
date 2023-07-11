@@ -1,7 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const multer = require("multer");
-const path = require("path");
 
 const ctrl = require("../../controllers/contacts/index");
 
@@ -12,23 +10,7 @@ router.get("/", authenticate, ctrl.getAll);
 
 router.get("/:id", authenticate, isValidId, ctrl.getById);
 
-const tempDir = path.join(__dirname, "../../", "temp");
-const multerConfig = multer.diskStorage({
-  destination: tempDir,
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-const upload = multer({
-  storage: multerConfig,
-});
-router.post(
-  "/",
-  authenticate,
-  upload.single("cover"),
-  validateBody(schemas.addSchema),
-  ctrl.add
-);
+router.post("/", authenticate, validateBody(schemas.addSchema), ctrl.add);
 
 router.put(
   "/:id",
