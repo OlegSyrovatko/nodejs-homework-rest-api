@@ -19,12 +19,12 @@ const authenticate = async (req, res, next) => {
     if (!user) {
       // if (!user || !user.token || !user.token !== token) {
       // can not login from other devise
-      next(HttpError(401, "Not authorized"));
+      next(HttpError(401));
     }
     req.user = user;
     next();
   } catch (error) {
-    next(HttpError(401, "Not authorized"));
+    next(HttpError(401));
   }
 };
 
