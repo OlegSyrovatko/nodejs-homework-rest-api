@@ -1,6 +1,29 @@
 const { Schema, model } = require("mongoose");
+const mongoose = require("mongoose");
 const { handleMongooseError } = require("../helpers");
 const Joi = require("joi");
+
+const tokenRefreshSchema = new Schema(
+  {
+    email: {
+      type: String,
+      required: [true, "userId field, must be filled in correctly"],
+    },
+    tokenRefresh: {
+      type: String,
+      required: [true, "tokenRefresh field, must be filled in correctly"],
+    },
+  },
+  { versionKey: false, timestamps: true }
+);
+tokenRefreshSchema.post("save", handleMongooseError);
+
+const Token = model("token", tokenRefreshSchema);
+
+const refreshSchema = Joi.object({
+  email: Joi.string().email({ minDomainSegments: 2 }).required(),
+  tokenRefresh: Joi.string().required(),
+});
 
 const userSchema = new Schema(
   {
@@ -62,16 +85,24 @@ const updateSubscription = Joi.object({
   subscription: Joi.string().valid("starter", "pro", "business").required(),
 });
 
+const sessionSchema = new Schema({
+  uid: mongoose.Types.ObjectId,
+});
+const Session = mongoose.model("Session", sessionSchema);
+
 const schemas = {
   registerSchema,
   loginSchema,
   updateSubscription,
   emailSchema,
+  refreshSchema,
 };
 
 const User = model("user", userSchema);
 
 module.exports = {
+  Token,
   User,
+  Session,
   schemas,
 };
